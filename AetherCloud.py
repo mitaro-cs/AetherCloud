@@ -36,6 +36,11 @@ TOTAL_SHARED_STORAGE_BYTES = TOTAL_SHARED_STORAGE_GB * 1024 * 1024 * 1024
 MAX_UPLOAD_MB = int(os.getenv("AETHER_MAX_UPLOAD_MB", "250"))
 MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
 
+PASSWORD_HASH_METHOD = os.getenv("AETHER_PASSWORD_HASH_METHOD", "pbkdf2:sha256")
+APP_HOST = os.getenv("AETHER_HOST", "127.0.0.1")
+APP_PORT = int(os.getenv("AETHER_PORT", "5000"))
+TUNA_PUBLIC_URL = os.getenv("AETHER_TUNA_URL", "").strip()  # paste tuna URL here if needed
+
 BACKGROUND_IMAGE = (
     "https://i.pinimg.com/736x/f9/ad/c2/f9adc243ecb36023bf238bff0f7712d1.jpg"
 )
@@ -143,6 +148,33 @@ def valid_password(password):
         and bool(re.search(r"[0-9]", password))
         and bool(re.search(r"[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>/?]", password))
     )
+
+
+def hash_password(password):
+    return generate_password_hash(password, method=PASSWORD_HASH_METHOD)
+
+
+def verify_password(stored_hash, password):
+    try:
+        return check_password_hash(stored_hash, password), None
+    except (AttributeError, ValueError) as exc:
+        message = str(exc).lower()
+        if "hashlib" in message and "scrypt" in message:
+            return (
+                False,
+                "Password hash is not supported in this Python build. "
+                "Use Forgot password to reset it.",
+            )
+        return False, "Unable to verify password. Use Forgot password to reset it."
+
+
+def normalized_public_url(raw_url):
+    value = (raw_url or "").strip().rstrip("/")
+    if not value:
+        return ""
+    if not value.startswith(("http://", "https://")):
+        value = f"https://{value}"
+    return value
 
 
 # ================== HELPERS ==================
@@ -1865,7 +1897,7 @@ def register():
                 with db() as con:
                     cur = con.execute(
                         "INSERT INTO users(fullname, email, password, created) VALUES(?,?,?,?)",
-                        (fullname, email, generate_password_hash(password), utc_now()),
+                        (fullname, email, hash_password(password), utc_now()),
                     )
                     user_id = int(cur.lastrowid)
                 ensure_default_workspace(user_id, fullname)
@@ -1900,12 +1932,16 @@ def login():
                 (email,),
             ).fetchone()
 
-        if row and check_password_hash(row["password"], password):
-            session["user_id"] = row["id"]
-            ensure_default_workspace(row["id"], row["fullname"])
-            return redirect(url_for("cloud"))
         if row:
-            error = "Пароль не подходит."
+            is_valid, hash_error = verify_password(row["password"], password)
+            if hash_error:
+                error = hash_error
+            elif is_valid:
+                session["user_id"] = row["id"]
+                ensure_default_workspace(row["id"], row["fullname"])
+                return redirect(url_for("cloud"))
+            else:
+                error = "Пароль не подходит."
         else:
             error = "User not found."
 
@@ -1944,7 +1980,7 @@ def forgot():
                 else:
                     con.execute(
                         "UPDATE users SET password=? WHERE email=?",
-                        (generate_password_hash(new_pw), email),
+                        (hash_password(new_pw), email),
                     )
                     message = "Password successfully updated."
 
@@ -2400,7 +2436,15 @@ def update_password():
             (user["id"],),
         ).fetchone()
 
-    if not row or not check_password_hash(row["password"], current_password):
+    if not row:
+        flash("Текущий пароль не подходит.", "error")
+        return cloud_redirect(folder_id, "settings", "folders")
+
+    current_valid, hash_error = verify_password(row["password"], current_password)
+    if hash_error:
+        flash(hash_error, "error")
+        return cloud_redirect(folder_id, "settings", "folders")
+    if not current_valid:
         flash("Текущий пароль не подходит.", "error")
         return cloud_redirect(folder_id, "settings", "folders")
     if new_password != confirm_password:
@@ -2413,7 +2457,7 @@ def update_password():
     with db() as con:
         con.execute(
             "UPDATE users SET password=? WHERE id=?",
-            (generate_password_hash(new_password), user["id"]),
+            (hash_password(new_password), user["id"]),
         )
 
     flash("Password changed.", "ok")
@@ -2427,4 +2471,9 @@ def too_large(_error):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    local_url = f"http://{APP_HOST}:{APP_PORT}"
+    public_url = normalized_public_url(TUNA_PUBLIC_URL)
+    print(f"[AetherCloud] Local URL: {local_url}")
+    if public_url:
+        print(f"[AetherCloud] Tuna URL: {public_url}")
+    app.run(debug=True, host=APP_HOST, port=APP_PORT)

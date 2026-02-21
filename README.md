@@ -71,6 +71,9 @@ You can place both DB and storage on another disk via environment variables.
 - `AETHER_SECRET_KEY` - Flask session secret
 - `AETHER_TOTAL_STORAGE_GB` - total shared storage in GB (default: `280`)
 - `AETHER_MAX_UPLOAD_MB` - max upload size in MB (default: `250`)
+- `AETHER_HOST` - bind host (default: `127.0.0.1`)
+- `AETHER_PORT` - app port (default: `5000`)
+- `AETHER_TUNA_URL` - your public tuna URL (optional, printed on startup)
 
 Example (Windows, external `E:` disk):
 
@@ -78,6 +81,8 @@ Example (Windows, external `E:` disk):
 $env:AETHER_DB_PATH = "E:\\AetherCloudData\\users.db"
 $env:AETHER_STORAGE_DIR = "E:\\AetherCloudData\\storage"
 $env:AETHER_SECRET_KEY = "change-this-secret"
+$env:AETHER_PORT = "5000"
+$env:AETHER_TUNA_URL = "https://your-subdomain.tuna.am"
 python AetherCloud.py
 ```
 
@@ -90,6 +95,7 @@ python AetherCloud.py
 Open:
 
 - `http://127.0.0.1:5000/`
+- your `AETHER_TUNA_URL` if set
 
 ## Data model
 
