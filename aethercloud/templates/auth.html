@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="theme-color" content="#090d18">
+    <link rel="icon" href="{{ url_for('favicon') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('manifest_file') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <script defer src="{{ url_for('static', filename='js/pwa.js') }}"></script>
+</head>
+<body>
+    <main class="auth-shell">
+        <section class="auth-showcase">
+            <a class="brand" href="{{ url_for('landing') }}">
+                <img src="{{ url_for('favicon') }}" alt="AetherCloud">
+                <span>AetherCloud</span>
+            </a>
+
+            <div class="showcase-copy">
+                <div class="eyebrow">Self-hosted private cloud</div>
+                <h1>Use your own disk as a clean, installable storage app.</h1>
+                <p>
+                    Your Windows machine hosts the files. The interface scales to phone,
+                    desktop and browser installs without changing the backend model.
+                </p>
+            </div>
+
+            <div class="showcase-metrics">
+                <article class="metric-card">
+                    <strong>Folders</strong>
+                    <span>Nested workspace tree with uploads and previews</span>
+                </article>
+                <article class="metric-card">
+                    <strong>Access</strong>
+                    <span>Open through tunnel, reverse proxy or your local network</span>
+                </article>
+                <article class="metric-card">
+                    <strong>Install</strong>
+                    <span>Save it to iOS, Android, Windows and macOS like an app</span>
+                </article>
+            </div>
+
+            <div class="mini-preview">
+                <div class="mini-sidebar"></div>
+                <div class="mini-main">
+                    <div class="mini-top"></div>
+                    <div class="mini-row">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="mini-grid">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="auth-panel">
+            <div class="panel-top">
+                <div>
+                    <div class="eyebrow">Workspace Access</div>
+                    {% if mode == "register" %}
+                        <h2>Create your node account</h2>
+                        <p>Start with one account, then open the cloud dashboard from any device.</p>
+                    {% elif mode == "login" %}
+                        <h2>Sign in to your workspace</h2>
+                        <p>Continue where you left off and manage the files on your own disk.</p>
+                    {% else %}
+                        <h2>Reset access</h2>
+                        <p>Enter your email and define a new password for this workspace.</p>
+                    {% endif %}
+                </div>
+                <button class="install-link" type="button" data-install-trigger hidden>Install App</button>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-stack">
+                        {% for category, item in messages %}
+                            <div class="flash flash-{{ category }}">{{ item }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if error %}
+                <div class="flash flash-error">{{ error }}</div>
+            {% endif %}
+            {% if message %}
+                <div class="flash flash-ok">{{ message }}</div>
+            {% endif %}
+
+            {% if mode == "register" %}
+                <form class="auth-form" method="POST">
+                    <label>
+                        <span>Full name</span>
+                        <input type="text" name="fullname" value="{{ form.fullname|e }}" required>
+                    </label>
+                    <label>
+                        <span>Email</span>
+                        <input type="email" name="email" value="{{ form.email|e }}" required>
+                    </label>
+                    <label>
+                        <span>Password</span>
+                        <input type="password" name="password" value="{{ form.password|e }}" required>
+                    </label>
+                    <label>
+                        <span>Repeat password</span>
+                        <input type="password" name="confirm_password" value="{{ form.confirm_password|e }}" required>
+                    </label>
+                    <button class="submit-btn" type="submit">Create account</button>
+                </form>
+                <div class="panel-footer">
+                    Already have access?
+                    <a href="{{ url_for('login') }}">Sign in</a>
+                </div>
+            {% endif %}
+
+            {% if mode == "login" %}
+                <form class="auth-form" method="POST">
+                    <label>
+                        <span>Email</span>
+                        <input type="email" name="email" value="{{ form.email|e }}" required>
+                    </label>
+                    <label>
+                        <span>Password</span>
+                        <input type="password" name="password" value="{{ form.password|e }}" required>
+                    </label>
+                    <button class="submit-btn" type="submit">Sign in</button>
+                </form>
+                <div class="panel-footer">
+                    <a href="{{ url_for('register') }}">Create account</a>
+                    <span class="divider"></span>
+                    <a href="{{ url_for('forgot') }}">Forgot password?</a>
+                </div>
+            {% endif %}
+
+            {% if mode == "forgot" %}
+                <form class="auth-form" method="POST">
+                    <label>
+                        <span>Email</span>
+                        <input type="email" name="email" value="{{ form.email|e }}" required>
+                    </label>
+                    <label>
+                        <span>New password</span>
+                        <input type="password" name="new_password" value="{{ form.new_password|e }}" required>
+                    </label>
+                    <button class="submit-btn" type="submit">Reset password</button>
+                </form>
+                <div class="panel-footer">
+                    <a href="{{ url_for('login') }}">Back to sign in</a>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

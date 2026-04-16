@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="theme-color" content="#090d18">
+    <meta name="description" content="Turn your own Windows disk into a private cloud that runs everywhere.">
+    <link rel="icon" href="{{ url_for('favicon') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('manifest_file') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <script defer src="{{ url_for('static', filename='js/pwa.js') }}"></script>
+</head>
+<body>
+    <div class="page-glow"></div>
+    <header class="site-header">
+        <a class="brand" href="{{ url_for('landing') }}">
+            <img src="{{ url_for('favicon') }}" alt="AetherCloud">
+            <span>AetherCloud</span>
+        </a>
+        <nav class="header-nav">
+            <a href="#features">Features</a>
+            <a href="#self-host">Self-Host</a>
+            <a href="#platforms">Devices</a>
+            <a href="#quickstart">Quick Start</a>
+        </nav>
+        <div class="header-actions">
+            {% if viewer %}
+                <a class="btn btn-ghost" href="{{ url_for('cloud') }}">Open Cloud</a>
+            {% else %}
+                <a class="btn btn-ghost" href="{{ url_for('login') }}">Sign In</a>
+                <a class="btn btn-primary" href="{{ url_for('register') }}">Create Account</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="landing-shell">
+        <section class="hero">
+            <div class="hero-copy">
+                <div class="eyebrow">Private cloud from your own disk</div>
+                <h1>Run a beautiful self-hosted storage node from your Windows machine.</h1>
+                <p class="hero-text">
+                    Plug in a drive, point AetherCloud at it, and open your files from iPhone,
+                    Android, Windows, macOS or the browser. No third-party cloud required.
+                </p>
+                <div class="hero-actions">
+                    {% if viewer %}
+                        <a class="btn btn-primary" href="{{ url_for('cloud') }}">Launch Workspace</a>
+                    {% else %}
+                        <a class="btn btn-primary" href="{{ url_for('register') }}">Start Your Node</a>
+                        <a class="btn btn-ghost" href="#quickstart">Deployment Guide</a>
+                    {% endif %}
+                    <button class="btn btn-install" type="button" data-install-trigger hidden>
+                        Install App
+                    </button>
+                </div>
+                <div class="hero-strip">
+                    <div class="strip-card">
+                        <strong>{{ total_storage_gb }} GB</strong>
+                        <span>shared storage pool</span>
+                    </div>
+                    <div class="strip-card">
+                        <strong>PWA</strong>
+                        <span>installable on all major platforms</span>
+                    </div>
+                    <div class="strip-card">
+                        <strong>SQLite + Disk</strong>
+                        <span>simple local metadata and file blobs</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <article class="desktop-preview">
+                    <div class="preview-topbar">
+                        <div class="preview-brand">
+                            <img src="{{ url_for('favicon') }}" alt="">
+                            <span>AetherCloud</span>
+                        </div>
+                        <div class="preview-search">Search files, folders, devices...</div>
+                        <div class="preview-avatar">AC</div>
+                    </div>
+                    <div class="preview-body">
+                        <aside class="preview-rail">
+                            <span class="rail-pill active">Dashboard</span>
+                            <span class="rail-pill">Storage</span>
+                            <span class="rail-pill">Sync</span>
+                            <span class="rail-pill">Stats</span>
+                        </aside>
+                        <section class="preview-main">
+                            <div class="preview-head">
+                                <div>
+                                    <h2>Documents</h2>
+                                    <p>Your personal self-hosted workspace</p>
+                                </div>
+                                <span class="upload-chip">+ Upload</span>
+                            </div>
+                            <div class="folder-row">
+                                <div class="folder-tile theme-aqua"></div>
+                                <div class="folder-tile theme-violet"></div>
+                                <div class="folder-tile theme-amber"></div>
+                            </div>
+                            <div class="file-grid">
+                                <div class="file-tile glow-aqua"></div>
+                                <div class="file-tile glow-sunset"></div>
+                                <div class="file-tile glow-violet"></div>
+                                <div class="file-tile glow-mint"></div>
+                                <div class="file-tile glow-amber"></div>
+                                <div class="file-tile glow-aqua"></div>
+                            </div>
+                        </section>
+                        <aside class="preview-side">
+                            <div class="side-card preview-featured"></div>
+                            <div class="side-card storage-donut">
+                                <div class="donut-ring"></div>
+                            </div>
+                        </aside>
+                    </div>
+                </article>
+
+                <article class="phone-preview">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="phone-track"></div>
+                        <div class="phone-card phone-hero"></div>
+                        <div class="phone-card phone-line"></div>
+                        <div class="phone-card phone-line"></div>
+                        <div class="phone-card phone-line"></div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="platforms" id="platforms">
+            <div class="section-heading">
+                <div class="eyebrow">Install Everywhere</div>
+                <h2>One codebase, every screen that matters.</h2>
+            </div>
+            <div class="platform-grid">
+                <article class="platform-card">iOS</article>
+                <article class="platform-card">Android</article>
+                <article class="platform-card">Windows</article>
+                <article class="platform-card">macOS</article>
+                <article class="platform-card">Browser</article>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="section-heading">
+                <div class="eyebrow">Product Direction</div>
+                <h2>Designed for personal nodes, families and small private teams.</h2>
+            </div>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <h3>Bring Your Own Disk</h3>
+                    <p>Keep the binary storage on a Windows drive, external SSD or any mounted volume you trust.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Installable PWA</h3>
+                    <p>The web client can be installed like an app on iPhone, Android, Windows and macOS.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Folder-First Workspace</h3>
+                    <p>Nested folders, previews, storage meter, recent uploads and personal account settings are ready.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Simple Self-Hosting</h3>
+                    <p>Launch with plain Python or Docker Compose, then expose it through a tunnel or reverse proxy.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="self-host" id="self-host">
+            <div class="section-heading">
+                <div class="eyebrow">Self-Host Model</div>
+                <h2>Point the app at your own drive and keep the storage logic local.</h2>
+            </div>
+            <div class="host-grid">
+                <article class="host-card">
+                    <span class="host-step">01</span>
+                    <h3>Choose the storage volume</h3>
+                    <p>Use a repo-local folder, a mounted NAS path or a Windows disk like <code>E:\AetherCloudData</code>.</p>
+                </article>
+                <article class="host-card">
+                    <span class="host-step">02</span>
+                    <h3>Run the service</h3>
+                    <p>Start with Python for local testing or Docker Compose for a more portable deployment story.</p>
+                </article>
+                <article class="host-card">
+                    <span class="host-step">03</span>
+                    <h3>Open it on any device</h3>
+                    <p>Add a tunnel or HTTPS reverse proxy, then install the app shell from Safari, Chrome or Edge.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="quickstart" id="quickstart">
+            <div class="section-heading">
+                <div class="eyebrow">Quick Start</div>
+                <h2>Launch locally in minutes.</h2>
+            </div>
+            <div class="quickstart-grid">
+                <article class="code-card">
+                    <div class="card-title">Python</div>
+<pre><code>python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+export AETHER_STORAGE_DIR="/Volumes/AetherDrive/storage"
+python AetherCloud.py</code></pre>
+                </article>
+                <article class="code-card">
+                    <div class="card-title">Docker Compose</div>
+<pre><code>cp .env.example .env
+docker compose up -d
+
+# Default volume
+{{ docker_volume }}
+
+# Windows disk example
+{{ windows_disk_example }}</code></pre>
+                </article>
+            </div>
+            {% if public_url %}
+                <div class="public-url">
+                    Public endpoint configured:
+                    <a href="{{ public_url }}">{{ public_url }}</a>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="cta-block">
+            <div>
+                <div class="eyebrow">Your Private Cloud</div>
+                <h2>Make the disk on your own machine behave like a cloud, without giving it away.</h2>
+            </div>
+            <div class="cta-actions">
+                {% if viewer %}
+                    <a class="btn btn-primary" href="{{ url_for('cloud') }}">Open Workspace</a>
+                {% else %}
+                    <a class="btn btn-primary" href="{{ url_for('register') }}">Create Account</a>
+                    <a class="btn btn-ghost" href="{{ url_for('login') }}">Sign In</a>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

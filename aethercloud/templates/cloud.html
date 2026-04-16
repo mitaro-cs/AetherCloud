@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="theme-color" content="#090d18">
+    <link rel="icon" href="{{ url_for('favicon') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('manifest_file') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cloud.css') }}">
+    <script defer src="{{ url_for('static', filename='js/pwa.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/cloud.js') }}"></script>
+</head>
+<body>
+    <div class="cloud-shell">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <a class="brand" href="{{ url_for('landing') }}">
+                    <img src="{{ url_for('favicon') }}" alt="AetherCloud">
+                    <div>
+                        <strong>AetherCloud</strong>
+                        <span>self-hosted node</span>
+                    </div>
+                </a>
+
+                <nav class="nav-stack">
+                    <a class="nav-link {% if active_view == 'home' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='home', tab=active_tab, q=search) }}">
+                        <span class="nav-icon">D</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a class="nav-link {% if active_view == 'storage' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='storage', tab=active_tab, q=search) }}">
+                        <span class="nav-icon">S</span>
+                        <span>Storage</span>
+                    </a>
+                    <a class="nav-link {% if active_view == 'sync' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='sync', tab=active_tab, q=search) }}">
+                        <span class="nav-icon">Y</span>
+                        <span>Sync</span>
+                    </a>
+                    <a class="nav-link {% if active_view == 'stats' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='stats', tab=active_tab, q=search) }}">
+                        <span class="nav-icon">A</span>
+                        <span>Analytics</span>
+                    </a>
+                    <a class="nav-link {% if active_view == 'settings' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='settings', tab=active_tab, q=search) }}">
+                        <span class="nav-icon">G</span>
+                        <span>Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-panel">
+                <div class="panel-head">
+                    <strong>Workspace Tree</strong>
+                    <div class="tab-switch">
+                        <a class="{% if active_tab == 'folders' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view=active_view, tab='folders', q=search) }}">Folders</a>
+                        <a class="{% if active_tab == 'tags' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view=active_view, tab='tags', q=search) }}">Types</a>
+                    </div>
+                </div>
+
+                {% if active_tab == "folders" %}
+                    <div class="tree-list">
+                        <a class="tree-item {% if current_folder.id == root_id %}active{% endif %}" href="{{ url_for('cloud', folder=root_id, view='storage', tab='folders') }}">
+                            <span>{{ breadcrumbs[0].name if breadcrumbs else current_folder_name }}</span>
+                        </a>
+                        {% for node in tree %}
+                            <a class="tree-item {% if node.id == current_folder.id %}active{% endif %}" style="--depth: {{ node.depth }};" href="{{ url_for('cloud', folder=node.id, view=active_view, tab=active_tab, q=search) }}">
+                                <span>{{ node.name }}</span>
+                                <em>{{ node.file_count }}</em>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="tree-list">
+                        {% if tags %}
+                            {% for tag in tags %}
+                                <a class="tree-item" href="{{ url_for('cloud', folder=current_folder.id, view='storage', tab='tags', q=tag.query) }}">
+                                    <span>{{ tag.name }}</span>
+                                    <em>{{ tag.count }}</em>
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-card">No file types yet.</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-chip">
+                    <strong>{{ nick }}</strong>
+                    <span>{{ user.email }}</span>
+                </div>
+                <div class="footer-actions">
+                    {% if is_admin %}
+                        <a href="{{ url_for('admin_console') }}">Admin</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="workspace">
+            <header class="workspace-header">
+                <div class="workspace-copy">
+                    <div class="crumbs">
+                        {% for item in breadcrumbs %}
+                            <a href="{{ url_for('cloud', folder=item.id, view='storage', tab=active_tab, q=search) }}">{{ item.name }}</a>
+                            {% if not loop.last %}<span>/</span>{% endif %}
+                        {% endfor %}
+                    </div>
+                    <h1>{{ view_title }}</h1>
+                    <p>{{ view_subtitle }}</p>
+                </div>
+
+                <div class="header-tools">
+                    <form class="search-form" method="GET" action="{{ url_for('cloud') }}">
+                        <input type="hidden" name="folder" value="{{ current_folder.id }}">
+                        <input type="hidden" name="view" value="{{ active_view }}">
+                        <input type="hidden" name="tab" value="{{ active_tab }}">
+                        <input type="text" name="q" value="{{ search }}" placeholder="Search folders or files">
+                    </form>
+                    <button type="button" class="install-pill" data-install-trigger hidden>Install App</button>
+                </div>
+            </header>
+
+            {% if active_view in ['home', 'storage'] %}
+                <section class="action-grid">
+                    <form class="action-card" method="POST" action="{{ url_for('create_folder') }}">
+                        <input type="hidden" name="parent_id" value="{{ current_folder.id }}">
+                        <input type="hidden" name="next_view" value="{{ active_view }}">
+                        <input type="hidden" name="next_tab" value="{{ active_tab }}">
+                        <label>Create Folder</label>
+                        <div class="action-row">
+                            <input type="text" name="name" placeholder="Design Vault" required>
+                            <button type="submit">Create</button>
+                        </div>
+                    </form>
+
+                    <form class="action-card" method="POST" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
+                        <input type="hidden" name="folder_id" value="{{ current_folder.id }}">
+                        <input type="hidden" name="next_view" value="{{ active_view }}">
+                        <input type="hidden" name="next_tab" value="{{ active_tab }}">
+                        <label>Upload Files</label>
+                        <div class="action-row action-row-file">
+                            <input type="file" name="files" multiple required>
+                            <button type="submit">Upload</button>
+                        </div>
+                    </form>
+
+                    <form class="action-card" method="POST" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
+                        <input type="hidden" name="folder_id" value="{{ current_folder.id }}">
+                        <input type="hidden" name="next_view" value="{{ active_view }}">
+                        <input type="hidden" name="next_tab" value="{{ active_tab }}">
+                        <label>Upload Folder</label>
+                        <div class="action-row action-row-file">
+                            <input type="file" name="folder_files" webkitdirectory directory multiple required>
+                            <button type="submit">Upload</button>
+                        </div>
+                    </form>
+                </section>
+            {% endif %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <section class="flash-stack">
+                        {% for category, item in messages %}
+                            <div class="flash flash-{{ category }}">{{ item }}</div>
+                        {% endfor %}
+                    </section>
+                {% endif %}
+            {% endwith %}
+
+            {% if active_view == "home" %}
+                <section class="metric-grid">
+                    <article class="metric-card">
+                        <span>Folders</span>
+                        <strong>{{ stats.folders_total }}</strong>
+                        <em>inside your workspace</em>
+                    </article>
+                    <article class="metric-card">
+                        <span>Files</span>
+                        <strong>{{ stats.files_total }}</strong>
+                        <em>indexed on disk</em>
+                    </article>
+                    <article class="metric-card">
+                        <span>Used</span>
+                        <strong>{{ used_label }}</strong>
+                        <em>of {{ max_label }}</em>
+                    </article>
+                    <article class="metric-card">
+                        <span>Free</span>
+                        <strong>{{ free_label }}</strong>
+                        <em>available for new uploads</em>
+                    </article>
+                </section>
+
+                <section class="content-section">
+                    <div class="section-head">
+                        <h2>Recent uploads</h2>
+                        <span>{{ recent_files|length }} visible</span>
+                    </div>
+                    <div class="file-grid">
+                        {% if recent_files %}
+                            {% for file in recent_files %}
+                                <article class="file-card theme-{{ file.theme }}" data-file-card data-name="{{ file.original_name }}" data-size="{{ file.size_human }}" data-uploaded="{{ file.uploaded_short }}" data-ext="{{ file.ext|upper }}" data-preview="{{ file.thumb_url }}">
+                                    <img class="file-preview" src="{{ file.thumb_url }}" alt="">
+                                    <div class="file-meta">
+                                        <strong>{{ file.original_name }}</strong>
+                                        <span>{{ file.size_human }} • {{ file.ext|upper }}</span>
+                                    </div>
+                                    <div class="file-actions">
+                                        <a href="{{ file.download_url }}">Download</a>
+                                        <a href="{{ url_for('cloud', folder=file.folder_id, view='storage', tab='folders') }}">Open Folder</a>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-card wide">No recent uploads yet.</div>
+                        {% endif %}
+                    </div>
+                </section>
+            {% elif active_view == "storage" %}
+                <section class="content-section">
+                    <div class="section-head">
+                        <h2>Folders</h2>
+                        <span>{{ child_folders|length }} folders</span>
+                    </div>
+                    <div class="folder-grid">
+                        {% if child_folders %}
+                            {% for folder in child_folders %}
+                                <article class="folder-card theme-{{ folder.theme }}">
+                                    <a class="folder-link" href="{{ url_for('cloud', folder=folder.id, view='storage', tab=active_tab, q=search) }}">
+                                        <div class="folder-visual"></div>
+                                        <div class="folder-meta">
+                                            <strong>{{ folder.name }}</strong>
+                                            <span>{{ folder.file_count }} files • {{ folder.created_short }}</span>
+                                        </div>
+                                    </a>
+                                    <form method="POST" action="{{ url_for('delete_folder', folder_id=folder.id) }}">
+                                        <input type="hidden" name="next_view" value="{{ active_view }}">
+                                        <input type="hidden" name="next_tab" value="{{ active_tab }}">
+                                        <input type="hidden" name="folder_id" value="{{ current_folder.id }}">
+                                        <button type="submit">Delete</button>
+                                    </form>
+                                </article>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-card wide">No folders in this location.</div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="content-section">
+                    <div class="section-head">
+                        <h2>Files</h2>
+                        <span>{{ files|length }} assets</span>
+                    </div>
+                    <div class="file-grid">
+                        {% if files %}
+                            {% for file in files %}
+                                <article class="file-card theme-{{ file.theme }}" data-file-card data-name="{{ file.original_name }}" data-size="{{ file.size_human }}" data-uploaded="{{ file.uploaded_short }}" data-ext="{{ file.ext|upper }}" data-preview="{{ file.thumb_url }}">
+                                    <img class="file-preview" src="{{ file.thumb_url }}" alt="">
+                                    <div class="file-meta">
+                                        <strong>{{ file.original_name }}</strong>
+                                        <span>{{ file.size_human }} • {{ file.uploaded_short }}</span>
+                                    </div>
+                                    <div class="file-actions">
+                                        <a href="{{ file.download_url }}">Download</a>
+                                        <form method="POST" action="{{ url_for('delete_file', file_id=file.id) }}">
+                                            <input type="hidden" name="folder_id" value="{{ current_folder.id }}">
+                                            <input type="hidden" name="next_view" value="{{ active_view }}">
+                                            <input type="hidden" name="next_tab" value="{{ active_tab }}">
+                                            <button type="submit">Delete</button>
+                                        </form>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-card wide">No files uploaded to this folder.</div>
+                        {% endif %}
+                    </div>
+                </section>
+            {% elif active_view == "sync" %}
+                <section class="content-section">
+                    <div class="sync-card">
+                        <div>
+                            <h2>Consistency check</h2>
+                            <p>Scan metadata and disk files. Missing records are removed automatically.</p>
+                        </div>
+                        <form method="POST" action="{{ url_for('sync_check') }}">
+                            <input type="hidden" name="folder_id" value="{{ current_folder.id }}">
+                            <button type="submit">Run Sync Check</button>
+                        </form>
+                    </div>
+                </section>
+            {% elif active_view == "stats" %}
+                <section class="metric-grid">
+                    <article class="metric-card">
+                        <span>Total folders</span>
+                        <strong>{{ stats.folders_total }}</strong>
+                        <em>excluding the root</em>
+                    </article>
+                    <article class="metric-card">
+                        <span>Total files</span>
+                        <strong>{{ stats.files_total }}</strong>
+                        <em>tracked in SQLite</em>
+                    </article>
+                    <article class="metric-card">
+                        <span>Used space</span>
+                        <strong>{{ used_label }}</strong>
+                        <em>current usage</em>
+                    </article>
+                    <article class="metric-card">
+                        <span>Node total</span>
+                        <strong>{{ total_label }}</strong>
+                        <em>shared across {{ users_count }} users</em>
+                    </article>
+                </section>
+
+                <section class="content-section">
+                    <div class="section-head">
+                        <h2>File types</h2>
+                        <span>{{ tags|length }} extensions</span>
+                    </div>
+                    <div class="type-list">
+                        {% if tags %}
+                            {% for tag in tags %}
+                                <div class="type-row">
+                                    <span>{{ tag.name }}</span>
+                                    <em>{{ tag.count }}</em>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-card wide">No file statistics yet.</div>
+                        {% endif %}
+                    </div>
+                </section>
+            {% elif active_view == "settings" %}
+                <section class="settings-grid">
+                    <form class="settings-card" method="POST" action="{{ url_for('update_profile') }}">
+                        <input type="hidden" name="folder_id" value="{{ current_folder.id }}">
+                        <div class="section-head left">
+                            <h2>Profile</h2>
+                            <span>identity for the root workspace</span>
+                        </div>
+                        <label>
+                            <span>Display name</span>
+                            <input type="text" name="fullname" value="{{ user.fullname }}" required>
+                        </label>
+                        <label>
+                            <span>Email</span>
+                            <input type="email" value="{{ user.email }}" readonly>
+                        </label>
+                        <button type="submit">Save profile</button>
+                    </form>
+
+                    <form class="settings-card" method="POST" action="{{ url_for('update_password') }}">
+                        <input type="hidden" name="folder_id" value="{{ current_folder.id }}">
+                        <div class="section-head left">
+                            <h2>Password</h2>
+                            <span>protect the account used for this node</span>
+                        </div>
+                        <label>
+                            <span>Current password</span>
+                            <input type="password" name="current_password" required>
+                        </label>
+                        <label>
+                            <span>New password</span>
+                            <input type="password" name="new_password" required>
+                        </label>
+                        <label>
+                            <span>Repeat new password</span>
+                            <input type="password" name="confirm_password" required>
+                        </label>
+                        <button type="submit">Change password</button>
+                    </form>
+                </section>
+            {% endif %}
+        </main>
+
+        <aside class="inspector">
+            <section class="inspector-card">
+                <div class="inspector-head">
+                    <strong>Live Preview</strong>
+                    <span>{{ current_folder_name }}</span>
+                </div>
+                {% if latest_file %}
+                    <img class="inspector-image" src="{{ latest_file.thumb_url }}" alt="" data-inspector-image>
+                    <div class="inspector-meta">
+                        <strong data-inspector-name>{{ latest_file.original_name }}</strong>
+                        <span data-inspector-size>{{ latest_file.size_human }}</span>
+                        <em data-inspector-extra>{{ latest_file.ext|upper }} • {{ latest_file.uploaded_short }}</em>
+                    </div>
+                {% else %}
+                    <div class="empty-card">Upload a file to see a live preview here.</div>
+                {% endif %}
+            </section>
+
+            <section class="inspector-card">
+                <div class="inspector-head">
+                    <strong>Available Storage</strong>
+                    <span>{{ used_percent }}%</span>
+                </div>
+                <div class="storage-ring" style="--percent: {{ used_percent }};">
+                    <div class="storage-inner">
+                        <strong>{{ used_percent }}%</strong>
+                        <span>{{ used_label }}</span>
+                    </div>
+                </div>
+                <div class="storage-meta">
+                    <div><span>Used</span><strong>{{ used_label }}</strong></div>
+                    <div><span>Quota</span><strong>{{ max_label }}</strong></div>
+                    <div><span>Free</span><strong>{{ free_label }}</strong></div>
+                </div>
+            </section>
+
+            <section class="inspector-card">
+                <div class="inspector-head">
+                    <strong>Deployment Notes</strong>
+                    <span>self-host</span>
+                </div>
+                <ul class="tip-list">
+                    <li>Run the app on the machine with the attached disk.</li>
+                    <li>Expose it with HTTPS through a tunnel or reverse proxy.</li>
+                    <li>Use Install App on mobile or desktop for a native feel.</li>
+                </ul>
+                {% if public_url %}
+                    <a class="public-link" href="{{ public_url }}">{{ public_url }}</a>
+                {% endif %}
+            </section>
+        </aside>
+    </div>
+
+    <nav class="mobile-nav">
+        <a class="{% if active_view == 'home' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='home', tab=active_tab, q=search) }}">Home</a>
+        <a class="{% if active_view == 'storage' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='storage', tab=active_tab, q=search) }}">Storage</a>
+        <a class="{% if active_view == 'sync' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='sync', tab=active_tab, q=search) }}">Sync</a>
+        <a class="{% if active_view == 'stats' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='stats', tab=active_tab, q=search) }}">Stats</a>
+        <a class="{% if active_view == 'settings' %}active{% endif %}" href="{{ url_for('cloud', folder=current_folder.id, view='settings', tab=active_tab, q=search) }}">Settings</a>
+    </nav>
+</body>
+</html>

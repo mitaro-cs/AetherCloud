@@ -1,122 +1,141 @@
 # AetherCloud
 
-AetherCloud is a Flask-based cloud storage app with:
-- registration/login/reset password
-- personal folder tree
-- personal root folder named by user profile name
-- file upload/download/delete
-- file thumbnails/previews (images + type icons)
-- user settings (profile + password change)
-- admin-only console for `miri.saro@bk.ru`
-- storage usage meter and limits
-- deep black dashboard UI with white gradient accents
+![AetherCloud Preview](docs/preview.svg)
 
-The app keeps auth pages in the original visual direction and adds a full internal cloud workspace at `/cloud`.
+Self-hosted cloud storage that turns your own machine and attached disk into a polished private workspace.
 
-## What is implemented
+## What changed
 
-- Auth:
-  - `GET/POST /` - registration
-  - `GET/POST /login` - login
-  - `GET/POST /forgot` - password reset
-  - `GET /logout` - sign out
-- Cloud:
-  - `GET /cloud` - workspace view
-    - modes: `home`, `storage`, `sync`, `stats`, `settings` (query param `view`)
-    - sidebar tabs: `folders` and `tags` (query param `tab`)
-  - `POST /cloud/folders` - create folder
-  - `POST /cloud/folders/<folder_id>/delete` - delete folder (recursive)
-  - `POST /cloud/files/upload` - upload multiple files or an entire folder (with nested structure) into current folder
-  - `GET /cloud/files/<file_id>/download` - download file
-  - `GET /cloud/files/<file_id>/preview` - thumbnail/preview source
-  - `POST /cloud/files/<file_id>/delete` - delete file
-  - `POST /cloud/sync/check` - run consistency check
-  - `POST /cloud/settings/profile` - update display name
-  - `POST /cloud/settings/password` - change password
-- Admin:
-  - `GET /admin` - admin console (accessible only for `miri.saro@bk.ru`)
-  - shows global stats and all users overview
-- Storage logic:
-  - SQLite metadata (users/folders/files)
-  - physical file storage by user and folder
-  - shared storage pool split equally between all users
-  - max request size check (`AETHER_MAX_UPLOAD_MB`)
-- UI:
-  - left icon rail + folder tree panel + workspace area
-  - folder cards and files table
-  - breadcrumbs and storage usage progress
-  - responsive behavior for desktop/mobile
+- The project is now structured as a real Flask package in [`aethercloud`](aethercloud).
+- The old inline HTML monolith was replaced with templates and static assets.
+- `/` is now a product landing page.
+- `/register`, `/login`, `/forgot` are dedicated auth routes.
+- `/cloud` was redesigned into a more product-style dashboard inspired by the supplied references.
+- The web client is now installable as a PWA on iOS, Android, Windows and macOS.
+- A GitHub Pages-ready static presentation lives in [`docs/`](docs).
 
-## Project file
+## Stack
 
-- `AetherCloud.py` - backend + templates + styles (single-file app)
+- Backend: Flask + SQLite
+- Storage: local filesystem or mounted external disk
+- Frontend: Flask templates + custom CSS/JS
+- App distribution: installable PWA
+- Deployment: Python, Gunicorn or Docker Compose
+- License: MIT
 
-## Requirements
+## Features
 
-- Python 3.10+ (tested with Python 3.13)
-- pip
+- registration, login and password reset
+- personal root workspace per user
+- nested folders
+- multiple file upload and directory upload
+- file preview for images plus generated preview badges for other file types
+- personal storage meter and quota
+- profile and password settings
+- admin overview for `miri.saro@bk.ru`
+- landing page and GitHub Pages presentation
 
-Install:
+## Quick start
 
-```powershell
-pip install flask werkzeug
+### Python
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python AetherCloud.py
 ```
 
-## Configuration (important for external disk)
+Open `http://127.0.0.1:5000/`.
 
-You can place both DB and storage on another disk via environment variables.
-
-- `AETHER_DB_PATH` - path to SQLite file
-- `AETHER_STORAGE_DIR` - path to binary storage folder
-- `AETHER_SECRET_KEY` - Flask session secret
-- `AETHER_TOTAL_STORAGE_GB` - total shared storage in GB (default: `280`)
-- `AETHER_MAX_UPLOAD_MB` - max upload size in MB (default: `250`)
-- `AETHER_HOST` - bind host (default: `127.0.0.1`)
-- `AETHER_PORT` - app port (default: `5000`)
-- `AETHER_TUNA_URL` - your public tuna URL (optional, printed on startup)
-
-Example (Windows, external `E:` disk):
+For Windows there is a ready launcher:
 
 ```powershell
-$env:AETHER_DB_PATH = "E:\\AetherCloudData\\users.db"
-$env:AETHER_STORAGE_DIR = "E:\\AetherCloudData\\storage"
+.\scripts\start-windows.ps1 -StorageRoot "E:\AetherCloudData"
+```
+
+### Docker Compose
+
+```bash
+cp .env.example .env
+docker compose up -d
+```
+
+Default container volume:
+
+```text
+./data:/data
+```
+
+Windows external disk example:
+
+```text
+E:/AetherCloudData:/data
+```
+
+## Environment
+
+| Variable | Purpose |
+| --- | --- |
+| `AETHER_SECRET_KEY` | Flask session secret |
+| `AETHER_DB_PATH` | SQLite file path |
+| `AETHER_STORAGE_DIR` | blob storage directory |
+| `AETHER_TOTAL_STORAGE_GB` | total shared pool size |
+| `AETHER_MAX_UPLOAD_MB` | request size limit |
+| `AETHER_HOST` | bind host |
+| `AETHER_PORT` | bind port |
+| `AETHER_TUNA_URL` | optional public URL shown in the UI |
+| `AETHER_DEBUG` | debug mode for local runs |
+
+## Windows disk setup
+
+For a Windows host with a dedicated disk:
+
+```powershell
+$env:AETHER_DB_PATH = "E:\AetherCloudData\users.db"
+$env:AETHER_STORAGE_DIR = "E:\AetherCloudData\storage"
 $env:AETHER_SECRET_KEY = "change-this-secret"
 $env:AETHER_PORT = "5000"
-$env:AETHER_TUNA_URL = "https://your-subdomain.tuna.am"
 python AetherCloud.py
 ```
 
-## Run
+## Routes
 
-```powershell
-python AetherCloud.py
+- `/` - landing page
+- `/register` - create account
+- `/login` - sign in
+- `/forgot` - reset password
+- `/cloud` - main workspace
+- `/admin` - admin console
+- `/health` - simple health endpoint
+
+## GitHub page
+
+The repository now contains a static presentation in [`docs/index.html`](docs/index.html).
+
+To publish it with GitHub Pages:
+
+1. Push the repository to GitHub.
+2. Open repository settings.
+3. Enable GitHub Pages from the `docs/` folder on your default branch.
+
+The repo now also contains:
+
+- CI workflow: [.github/workflows/ci.yml](.github/workflows/ci.yml)
+- Pages deploy workflow: [.github/workflows/pages.yml](.github/workflows/pages.yml)
+
+## Tests
+
+```bash
+python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-Open:
+## License
 
-- `http://127.0.0.1:5000/`
-- your `AETHER_TUNA_URL` if set
+This project is released under the [MIT License](LICENSE).
 
-## Data model
+## Security notes
 
-SQLite tables:
-
-- `users(id, fullname, email, password, created)`
-- `folders(id, user_id, parent_id, name, created)`
-- `files(id, user_id, folder_id, original_name, stored_name, size, mime_type, uploaded)`
-
-Notes:
-- Legacy compatibility is included for old `files` schema.
-- First login/registration creates only one root folder and it is named from user profile.
-
-## Notes on storage cleanup
-
-You requested deletion of `storage` and DB files from the project folder.
-They are removed.  
-On next app start they will be created again automatically if paths point to this folder.
-
-To avoid local recreation in the project root, set:
-- `AETHER_DB_PATH`
-- `AETHER_STORAGE_DIR`
-
-to a different disk/folder before launch.
+- This is a self-hosted storage app, not a zero-trust encrypted vault.
+- Put it behind HTTPS if you want access from outside your local network.
+- Replace the default secret key before exposing it publicly.

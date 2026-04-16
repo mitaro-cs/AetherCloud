@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherCloud</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="page">
+        <header class="topbar">
+            <a class="brand" href="#top">
+                <img src="./icon.svg" alt="AetherCloud">
+                <span>AetherCloud</span>
+            </a>
+            <nav class="nav">
+                <a href="#features">Features</a>
+                <a href="#selfhost">Self-Host</a>
+                <a href="#quickstart">Quick Start</a>
+            </nav>
+        </header>
+
+        <section class="hero" id="top">
+            <div class="eyebrow">GitHub Pages Ready</div>
+            <h1>Run a private cloud from your own disk.</h1>
+            <p>
+                AetherCloud is a self-hosted Flask app with a polished storage UI,
+                installable PWA shell, Docker deployment and a workflow centered on your own Windows drive or attached disk.
+            </p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="#quickstart">Quick Start</a>
+                <a class="btn btn-ghost" href="#selfhost">Self-Host Model</a>
+            </div>
+            <p>MIT licensed. GitHub Actions can test the app and publish this page automatically.</p>
+            <img class="preview" src="./preview.svg" alt="AetherCloud preview">
+        </section>
+
+        <section class="section" id="features">
+            <div class="eyebrow">What You Get</div>
+            <h2>Storage, installability and clean self-hosting in one repo.</h2>
+            <div class="grid">
+                <article class="card">
+                    <strong>Bring your own disk</strong>
+                    <span>Place the database and file blobs on a local volume, mounted SSD or Windows drive letter.</span>
+                </article>
+                <article class="card">
+                    <strong>Installable PWA</strong>
+                    <span>Open the web UI on iOS, Android, Windows and macOS, then install it like an app.</span>
+                </article>
+                <article class="card">
+                    <strong>Folder-first dashboard</strong>
+                    <span>Nested folders, previews, storage meter, recent uploads, profile settings and admin overview.</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="selfhost">
+            <div class="eyebrow">Self-Host Model</div>
+            <h2>Point the app at your own storage path and expose it only how you want.</h2>
+            <div class="grid">
+                <article class="card">
+                    <strong>1. Choose the storage path</strong>
+                    <span>Use <code>E:\AetherCloudData</code>, a mounted volume or any server path you trust.</span>
+                </article>
+                <article class="card">
+                    <strong>2. Launch the service</strong>
+                    <span>Use Python for local development or Docker Compose for a cleaner portable deployment.</span>
+                </article>
+                <article class="card">
+                    <strong>3. Open from any device</strong>
+                    <span>Put it behind HTTPS, then install the app shell from Safari, Chrome or Edge.</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="quickstart">
+            <div class="eyebrow">Quick Start</div>
+            <h2>Run locally or with Docker.</h2>
+            <div class="code-grid">
+                <article class="card">
+                    <strong>Python</strong>
+<pre><code>python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+export AETHER_STORAGE_DIR="/Volumes/AetherDrive/storage"
+python AetherCloud.py</code></pre>
+                </article>
+                <article class="card">
+                    <strong>Docker Compose</strong>
+<pre><code>cp .env.example .env
+docker compose up -d
+
+# Default volume
+./data:/data
+
+# Windows disk example
+E:/AetherCloudData:/data</code></pre>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div>
+                <div class="eyebrow">Repository Note</div>
+                <h2>Enable GitHub Pages from the <code>docs/</code> folder to publish this page.</h2>
+            </div>
+            <a class="btn btn-primary" href="#top">Back To Top</a>
+        </section>
+    </main>
+</body>
+</html>

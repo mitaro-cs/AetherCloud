@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="theme-color" content="#090d18">
+    <link rel="icon" href="{{ url_for('favicon') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <main class="admin-shell">
+        <header class="admin-top">
+            <div>
+                <div class="eyebrow">Admin Console</div>
+                <h1>AetherCloud Node Overview</h1>
+                <p>Restricted to {{ admin_email }}. Logged in as {{ user.email }}.</p>
+            </div>
+            <a class="back-btn" href="{{ url_for('cloud', view='storage') }}">Back To Cloud</a>
+        </header>
+
+        <section class="admin-metrics">
+            <article class="metric-card">
+                <span>Users</span>
+                <strong>{{ metrics.users_total }}</strong>
+            </article>
+            <article class="metric-card">
+                <span>Folders</span>
+                <strong>{{ metrics.folders_total }}</strong>
+            </article>
+            <article class="metric-card">
+                <span>Files</span>
+                <strong>{{ metrics.files_total }}</strong>
+            </article>
+            <article class="metric-card">
+                <span>Used Space</span>
+                <strong>{{ metrics.bytes_label }}</strong>
+            </article>
+        </section>
+
+        <section class="admin-table">
+            <div class="table-head">
+                <h2>Users</h2>
+                <span>{{ users|length }} records</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Created</th>
+                            <th>Folders</th>
+                            <th>Files</th>
+                            <th>Used</th>
+                            <th>Quota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in users %}
+                            <tr>
+                                <td>{{ item.fullname }}</td>
+                                <td>{{ item.email }}</td>
+                                <td>{{ item.created_short }}</td>
+                                <td><span class="pill">{{ item.folders_total }}</span></td>
+                                <td><span class="pill">{{ item.files_total }}</span></td>
+                                <td>{{ item.used_label }}</td>
+                                <td>{{ item.quota_label }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#060913"/>
+      <stop offset="100%" stop-color="#070d19"/>
+    </linearGradient>
+    <linearGradient id="aqua" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" rx="0" fill="url(#bg)"/>
+  <circle cx="210" cy="120" r="220" fill="#7dd3fc" opacity="0.12"/>
+  <circle cx="1360" cy="160" r="260" fill="#c084fc" opacity="0.12"/>
+  <circle cx="1390" cy="780" r="220" fill="#fb7185" opacity="0.08"/>
+
+  <text x="120" y="140" fill="#7dd3fc" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="4">SELF-HOSTED PRIVATE CLOUD</text>
+  <text x="120" y="220" fill="#f8fbff" font-family="Arial, sans-serif" font-size="88" font-weight="700">AetherCloud</text>
+  <text x="120" y="290" fill="#98a3bf" font-family="Arial, sans-serif" font-size="30">Turn your own disk into a beautiful cloud workspace.</text>
+  <text x="120" y="340" fill="#98a3bf" font-family="Arial, sans-serif" font-size="30">Install it on iOS, Android, Windows and macOS as a PWA.</text>
+
+  <g transform="translate(120 390)">
+    <rect width="1080" height="390" rx="36" fill="#0b101c" stroke="#20263d" stroke-width="2"/>
+    <rect x="24" y="24" width="180" height="342" rx="24" fill="#12182a" stroke="#232a44"/>
+    <rect x="230" y="24" width="570" height="342" rx="24" fill="#101625" stroke="#232a44"/>
+    <rect x="824" y="24" width="232" height="342" rx="24" fill="#12182a" stroke="#232a44"/>
+
+    <rect x="42" y="42" width="58" height="58" rx="18" fill="url(#aqua)"/>
+    <text x="120" y="79" fill="#f8fbff" font-family="Arial, sans-serif" font-size="28" font-weight="700">AetherCloud</text>
+
+    <rect x="42" y="132" width="120" height="40" rx="14" fill="#1a2237"/>
+    <rect x="42" y="184" width="120" height="40" rx="14" fill="url(#aqua)"/>
+    <rect x="42" y="236" width="120" height="40" rx="14" fill="#1a2237"/>
+    <rect x="42" y="288" width="120" height="40" rx="14" fill="#1a2237"/>
+
+    <text x="256" y="78" fill="#f8fbff" font-family="Arial, sans-serif" font-size="46" font-weight="700">Documents</text>
+    <rect x="256" y="104" width="356" height="46" rx="16" fill="#161d31"/>
+    <rect x="638" y="104" width="132" height="46" rx="16" fill="url(#aqua)"/>
+
+    <rect x="256" y="182" width="164" height="126" rx="24" fill="url(#aqua)" opacity="0.28"/>
+    <rect x="446" y="182" width="164" height="126" rx="24" fill="url(#violet)" opacity="0.28"/>
+    <rect x="636" y="182" width="140" height="126" rx="24" fill="url(#amber)" opacity="0.28"/>
+    <rect x="274" y="206" width="130" height="86" rx="18" fill="#0b101c" opacity="0.82"/>
+    <rect x="464" y="206" width="130" height="86" rx="18" fill="#0b101c" opacity="0.82"/>
+    <rect x="654" y="206" width="104" height="86" rx="18" fill="#0b101c" opacity="0.82"/>
+
+    <rect x="256" y="334" width="164" height="16" rx="8" fill="#202742"/>
+    <rect x="446" y="334" width="164" height="16" rx="8" fill="#202742"/>
+    <rect x="636" y="334" width="140" height="16" rx="8" fill="#202742"/>
+
+    <rect x="848" y="52" width="184" height="146" rx="22" fill="url(#violet)" opacity="0.38"/>
+    <rect x="848" y="220" width="184" height="120" rx="22" fill="#141c2f"/>
+    <circle cx="940" cy="285" r="54" fill="url(#aqua)"/>
+    <circle cx="940" cy="285" r="34" fill="#111827"/>
+  </g>
+
+  <g transform="translate(1220 420)">
+    <rect width="220" height="390" rx="42" fill="#090d18" stroke="#20263d" stroke-width="2"/>
+    <rect x="68" y="18" width="84" height="20" rx="10" fill="#161d31"/>
+    <rect x="22" y="58" width="176" height="98" rx="24" fill="url(#aqua)" opacity="0.42"/>
+    <rect x="22" y="174" width="176" height="60" rx="22" fill="#141c2f"/>
+    <rect x="22" y="252" width="176" height="60" rx="22" fill="#141c2f"/>
+    <rect x="22" y="330" width="176" height="38" rx="19" fill="#141c2f"/>
+  </g>
+</svg>
