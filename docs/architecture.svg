@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#060913"/>
+      <stop offset="100%" stop-color="#0a1020"/>
+    </linearGradient>
+    <linearGradient id="aqua" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="180" cy="140" r="180" fill="#7dd3fc" opacity="0.12"/>
+  <circle cx="1120" cy="120" r="200" fill="#c084fc" opacity="0.12"/>
+  <circle cx="1090" cy="620" r="180" fill="#fb7185" opacity="0.08"/>
+
+  <text x="70" y="86" fill="#7dd3fc" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="4">AETHERCLOUD ARCHITECTURE</text>
+  <text x="70" y="136" fill="#f8fbff" font-family="Arial, sans-serif" font-size="42" font-weight="700">Browser / PWA / Desktop Install</text>
+
+  <g transform="translate(70 190)">
+    <rect width="270" height="140" rx="28" fill="#101627" stroke="#28314b" stroke-width="2"/>
+    <text x="28" y="46" fill="#f8fbff" font-family="Arial, sans-serif" font-size="28" font-weight="700">Client Layer</text>
+    <text x="28" y="86" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">Landing page</text>
+    <text x="28" y="112" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">Cloud dashboard</text>
+    <text x="28" y="138" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">Installable PWA shell</text>
+  </g>
+
+  <g transform="translate(500 190)">
+    <rect width="280" height="140" rx="28" fill="#101627" stroke="#28314b" stroke-width="2"/>
+    <text x="28" y="46" fill="#f8fbff" font-family="Arial, sans-serif" font-size="28" font-weight="700">Flask App</text>
+    <text x="28" y="86" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">Auth routes</text>
+    <text x="28" y="112" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">Upload / download / preview</text>
+    <text x="28" y="138" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">Admin + sync + settings</text>
+  </g>
+
+  <g transform="translate(940 190)">
+    <rect width="270" height="140" rx="28" fill="#101627" stroke="#28314b" stroke-width="2"/>
+    <text x="28" y="46" fill="#f8fbff" font-family="Arial, sans-serif" font-size="28" font-weight="700">Storage Layer</text>
+    <text x="28" y="86" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">SQLite metadata</text>
+    <text x="28" y="112" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">Local or external disk</text>
+    <text x="28" y="138" fill="#98a3bf" font-family="Arial, sans-serif" font-size="20">Per-user folder roots</text>
+  </g>
+
+  <g transform="translate(130 430)">
+    <rect width="330" height="170" rx="28" fill="#131a2c" stroke="url(#aqua)" stroke-width="2"/>
+    <text x="28" y="48" fill="#f8fbff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Run Modes</text>
+    <text x="28" y="92" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">Python dev server</text>
+    <text x="28" y="122" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">Gunicorn</text>
+    <text x="28" y="152" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">Docker Compose</text>
+  </g>
+
+  <g transform="translate(520 430)">
+    <rect width="300" height="170" rx="28" fill="#131a2c" stroke="url(#violet)" stroke-width="2"/>
+    <text x="28" y="48" fill="#f8fbff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Automation</text>
+    <text x="28" y="92" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">Unit + smoke tests</text>
+    <text x="28" y="122" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">GitHub Actions CI</text>
+    <text x="28" y="152" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">GitHub Pages deploy</text>
+  </g>
+
+  <g transform="translate(880 430)">
+    <rect width="300" height="170" rx="28" fill="#131a2c" stroke="url(#amber)" stroke-width="2"/>
+    <text x="28" y="48" fill="#f8fbff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Self-Hosting</text>
+    <text x="28" y="92" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">Windows external disk</text>
+    <text x="28" y="122" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">Reverse proxy / tunnel</text>
+    <text x="28" y="152" fill="#98a3bf" font-family="Arial, sans-serif" font-size="22">HTTPS-ready deployment</text>
+  </g>
+
+  <path d="M340 260H500" stroke="#7dd3fc" stroke-width="6" stroke-linecap="round"/>
+  <path d="M780 260H940" stroke="#c084fc" stroke-width="6" stroke-linecap="round"/>
+  <path d="M640 330V430" stroke="#f8fbff" stroke-opacity=".35" stroke-width="6" stroke-linecap="round"/>
+</svg>

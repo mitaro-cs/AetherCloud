@@ -1,0 +1,17 @@
+.DS_Store
+.env
+.venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+.github
+docs
+tests
+data
+storage
+users.db
+.pytest_cache
+.coverage
